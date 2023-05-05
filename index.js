@@ -33,7 +33,12 @@ const storage = multer.diskStorage({
   destination: (_, __, cb) => {
     cb(null, "uploads");
   },
+  filename: (_, file, cb) => {
+    cb(null, file.originalname);
+  },
 });
+
+const upload = multer({ storage });
 
 app.use(express.json());
 
@@ -46,6 +51,12 @@ app.get("/post/:id", getPost);
 app.post("/posts", checkAuth, postValidation, createPost);
 app.delete("/post/:id", checkAuth, deletePost);
 app.patch("/post/:id", checkAuth, updatePost);
+
+app.post("/upload", checkAuth, upload.single("image"), (req, res) =>
+  res.json({
+    url: `/uploads/${req.file.originalname}`,
+  })
+);
 
 app.listen(4444, (err) => {
   if (err) {
