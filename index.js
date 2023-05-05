@@ -7,14 +7,17 @@ import {
   postValidation,
 } from "./validations/validations.js";
 import checkAuth from "./utils/checkAuth.js";
-import { register, getMe, login } from "./controllers/UserController.js";
 import {
+  register,
   createPost,
   deletePost,
   getAllPosts,
+  getMe,
   getPost,
+  login,
   updatePost,
-} from "./controllers/PostController.js";
+} from "./controllers/index.js";
+import handleValidationErrors from "./validations/handleValidationErrors.js";
 
 mongoose
   .connect(
@@ -42,15 +45,34 @@ const upload = multer({ storage });
 
 app.use(express.json());
 
-app.post("/auth/login", loginValidation, login);
-app.post("/auth/register", registerValidation, register);
+app.use("/uploads", express.static("uploads"));
+
+app.post("/auth/login", loginValidation, handleValidationErrors, login);
+app.post(
+  "/auth/register",
+  registerValidation,
+  handleValidationErrors,
+  register
+);
 app.get("/auth/me", checkAuth, getMe);
 
 app.get("/posts", getAllPosts);
 app.get("/post/:id", getPost);
-app.post("/posts", checkAuth, postValidation, createPost);
+app.post(
+  "/posts",
+  checkAuth,
+  postValidation,
+  handleValidationErrors,
+  createPost
+);
 app.delete("/post/:id", checkAuth, deletePost);
-app.patch("/post/:id", checkAuth, updatePost);
+app.patch(
+  "/post/:id",
+  checkAuth,
+  postValidation,
+  handleValidationErrors,
+  updatePost
+);
 
 app.post("/upload", checkAuth, upload.single("image"), (req, res) =>
   res.json({
