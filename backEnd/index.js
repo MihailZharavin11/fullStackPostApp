@@ -1,6 +1,7 @@
 import express from "express";
 import mongoose from "mongoose";
 import multer from "multer";
+import cors from "cors";
 import {
   loginValidation,
   registerValidation,
@@ -16,6 +17,7 @@ import {
   getPost,
   login,
   updatePost,
+  getLastTags,
 } from "./controllers/index.js";
 import handleValidationErrors from "./validations/handleValidationErrors.js";
 
@@ -45,6 +47,8 @@ const upload = multer({ storage });
 
 app.use(express.json());
 
+app.use(cors());
+
 app.use("/uploads", express.static("uploads"));
 
 app.post("/auth/login", loginValidation, handleValidationErrors, login);
@@ -73,6 +77,7 @@ app.patch(
   handleValidationErrors,
   updatePost
 );
+app.get("/posts/tags", getLastTags);
 
 app.post("/upload", checkAuth, upload.single("image"), (req, res) =>
   res.json({

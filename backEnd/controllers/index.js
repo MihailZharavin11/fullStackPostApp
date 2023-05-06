@@ -5,6 +5,7 @@ import {
   getAllPosts,
   getPost,
   updatePost,
+  getLastTags,
 } from "./PostController.js";
 
 export {
@@ -16,4 +17,5 @@ export {
   getAllPosts,
   getPost,
   updatePost,
+  getLastTags,
 };
